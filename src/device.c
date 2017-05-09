@@ -1721,6 +1721,15 @@ void Routing_Device_Init(
 
 #endif /* BAC_ROUTING */
 
+int handler_cov_encode_subscriptions(
+    uint8_t * apdu,
+    int max_apdu)
+{
+    apdu = apdu;
+    max_apdu = max_apdu;
+
+    return 0;
+}
 
 #ifdef TEST
 #include <assert.h>

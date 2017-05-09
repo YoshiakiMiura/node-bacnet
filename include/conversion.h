@@ -2,6 +2,7 @@
 #include "rp.h"
 #include "bacaddr.h"
 #include "bacapp.h"
+#include "cov.h"
 
 using v8::Local;
 using v8::Value;
@@ -38,3 +39,4 @@ Local<Object> bacnetAddressToJ(Nan::HandleScope *scope, BACNET_ADDRESS *src);
 Local<String> abortReasonToJ(Nan::HandleScope *scope, uint8_t abortReason);
 Local<String> rejectReasonToJ(Nan::HandleScope *scope, uint8_t rejectReason);
 Local<String> errorCodesToJ(Nan::HandleScope *scope, BACNET_ERROR_CLASS error_class, BACNET_ERROR_CODE error_code);
+Local<Object> bacnetCovDataToJ(Nan::HandleScope *scope, BACNET_COV_DATA * cov_data);

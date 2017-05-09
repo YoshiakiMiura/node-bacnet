@@ -39,13 +39,13 @@ describe('Application value converters between BACnet and js domain', () => {
     roundTripConversionTest([0, 1e-37, -1e-37, 1e10, -1e10, Number.MAX_VALUE, Number.MIN_VALUE], 'Double')
   })
   describe('octet string conversion roundtrip', () => {
-    roundTripConversionTest([new Buffer(0), new Buffer([0, 1, 2])], 'Octet String')
+    roundTripConversionTest([Buffer.alloc(0), Buffer.from([0, 1, 2])], 'Octet String')
   })
   describe('character string conversion roundtrip', () => {
     roundTripConversionTest(['Hallå', 'världen'], 'Character String')
   })
   xdescribe('bit string conversion roundtrip', () => {
-    roundTripConversionTest([new Buffer('hello')], 'Bit String')
+    roundTripConversionTest([Buffer.from('hello')], 'Bit String')
   })
   describe('enumerated conversion roundtrip', () => {
     roundTripConversionTest([0, 200], 'Enumerated')
@@ -75,7 +75,7 @@ describe('Application value converters between BACnet and js domain', () => {
     typeInferenceTest(-1, 'Signed Int')
     typeInferenceTest(0.25, 'Real')
     typeInferenceTest('string', 'Character String')
-    typeInferenceTest(new Buffer([0, 1]), 'Octet String')
+    typeInferenceTest(Buffer.from([0, 1]), 'Octet String')
     typeInferenceTest({year: 2016, month: 2, day: 16, weekday: 'Wednesday'}, 'Date')
     typeInferenceTest({hour: 1, min: 2, sec: 3, hundredths: 4}, 'Time')
     typeInferenceTest({type: 'device', instance: 123456}, 'Object ID')

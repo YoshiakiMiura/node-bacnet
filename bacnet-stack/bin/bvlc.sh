@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo Example of parameters for Foreign Device Registration
 BACNET_IP_PORT=47809
 export BACNET_IP_PORT
@@ -15,4 +15,4 @@ echo When the demo client applications see the BBMD address,
 echo they register as a Foreign Device to it.
 echo
 echo Launching new shell using the BBMD environment...
-/bin/bash
+bash

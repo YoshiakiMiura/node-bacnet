@@ -11,6 +11,7 @@
 #include "listenable.h"
 #include "functions.h"
 #include "NonBlockingQueue.h"
+#include "cov.h"
 
 using namespace v8;
 
@@ -270,5 +271,60 @@ void emit_error(
     event->error_class = error_class;
     event->error_code = error_code;
 
+    schedule(event);
+}
+
+class CCovEvent: public NodeCallback {
+private:
+    BACNET_ADDRESS * _src;
+    BACNET_COV_DATA * _cov_data;
+public:
+    CCovEvent(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data) {
+        _src = src;
+        _cov_data = cov_data;
+    }
+    void call() {
+        Nan::HandleScope scope;
+        Local<Object> localEventEmitter = Nan::New(eventEmitter);
+        Local<Value> argv[] = {
+            Nan::New("ccov").ToLocalChecked(),
+            bacnetAddressToJ(&scope, _src),
+            bacnetCovDataToJ(&scope, _cov_data)
+        };
+
+        Nan::MakeCallback(localEventEmitter, "emit", 3, argv);
+    }
+};
+
+class UCovEvent: public NodeCallback {
+private:
+    BACNET_ADDRESS * _src;
+    BACNET_COV_DATA * _cov_data;
+
+public:
+    UCovEvent(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data) {
+        _src = src;
+        _cov_data = cov_data;
+    }
+    void call() {
+        Nan::HandleScope scope;
+        Local<Object> localEventEmitter = Nan::New(eventEmitter);
+        Local<Value> argv[] = {
+            Nan::New("ucov").ToLocalChecked(),
+            bacnetAddressToJ(&scope, _src),
+            bacnetCovDataToJ(&scope, _cov_data)
+        };
+
+        Nan::MakeCallback(localEventEmitter, "emit", 3, argv);
+    }
+};
+
+void emit_ccov(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data) {
+    CCovEvent * event = new CCovEvent(src, cov_data);
+    schedule(event);
+}
+
+void emit_ucov(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data) {
+    UCovEvent * event = new UCovEvent(src, cov_data);
     schedule(event);
 }

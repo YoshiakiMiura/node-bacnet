@@ -6,6 +6,7 @@
 #include "bacaddr.h"
 #include "bacapp.h"
 #include "rp.h"
+#include "cov.h"
 
 
 #ifdef __cplusplus
@@ -29,6 +30,9 @@ void emit_error(
     uint8_t invoke_id,
     BACNET_ERROR_CLASS error_class,
     BACNET_ERROR_CODE error_code);
+
+void emit_ccov(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data);
+void emit_ucov(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data);
 
 #ifdef __cplusplus
 }

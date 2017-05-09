@@ -15,6 +15,9 @@
 #include "address.h"
 #include "conversion.h"
 #include "BacnetValue.h"
+#include "device.h"
+#include "dlenv.h"
+#include "datalink.h"
 
 
 // Returns the object type string for an object type number. If a string is provided, it is checked for validity and returned
@@ -264,4 +267,61 @@ NAN_METHOD(initDevice) {
 
 NAN_METHOD(closeQueue) {
   eventEmitterClose();
+}
+
+// subscribeCov(deviceId, objectType, objectId, pid, type])
+NAN_METHOD(subscribeCov) {
+
+  BACNET_ADDRESS dest = {};
+  unsigned max_apdu = 0;
+
+  bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
+  uint32_t device_id = info[0]->ToUint32()->Value();
+  int32_t object_type = info[1]->ToInt32()->Value();
+  int32_t object_instance = info[2]->ToInt32()->Value();
+  uint32_t pid = info[3]->ToUint32()->Value();
+  std::string type = extractString(info[4].As<v8::String>());
+
+  if (addressed) {
+      BACNET_SUBSCRIBE_COV_DATA *cov_data = new BACNET_SUBSCRIBE_COV_DATA;
+      cov_data->monitoredObjectIdentifier.type = object_type;
+      cov_data->monitoredObjectIdentifier.instance = object_instance;
+      cov_data->subscriberProcessIdentifier = pid;
+      cov_data->lifetime = 0;
+      // confirmed or unconfirmed
+      cov_data->issueConfirmedNotifications = type == "confirmed" ;
+      int invoke_id = Send_COV_Subscribe(device_id, cov_data);
+
+      info.GetReturnValue().Set(Nan::New(invoke_id));
+  } else {
+      Nan::ThrowError("Unable to resolve address for subscribe.");
+  }
+}
+
+// timeSync(deviceId, objectType, objectId, pid, type])
+NAN_METHOD(timeSync) {
+  BACNET_ADDRESS dest = { 0 };
+  unsigned max_apdu = 0;
+  bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
+  time_t rawtime;
+  struct tm *my_time;
+  BACNET_DATE bdate;
+  BACNET_TIME btime;
+
+  if (addressed) {
+    time(&rawtime);
+    my_time = localtime(&rawtime);
+    bdate.year = my_time->tm_year + 1900;
+    bdate.month = my_time->tm_mon + 1;
+    bdate.day = my_time->tm_mday;
+    bdate.wday = my_time->tm_wday ? my_time->tm_wday : 7;
+    btime.hour = my_time->tm_hour;
+    btime.min = my_time->tm_min;
+    btime.sec = my_time->tm_sec;
+    btime.hundredths = 0;
+
+    Send_TimeSync_Remote(&dest, &bdate, &btime);
+  } else {
+      Nan::ThrowError("Unable to resolve address for time sync.");
+  }
 }

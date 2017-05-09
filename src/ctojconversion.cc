@@ -8,6 +8,7 @@
 #include "bacapp.h"
 #include "bactext.h"
 #include "rp.h"
+#include "cov.h"
 
 using namespace v8;
 
@@ -308,4 +309,41 @@ Local<String> abortReasonToJ(Nan::HandleScope *scope, uint8_t abortReason) {
 
 Local<String> rejectReasonToJ(Nan::HandleScope *scope, uint8_t rejectReason) {
     return Nan::New(bactext_abort_reason_name(rejectReason)).ToLocalChecked();
+}
+
+Local<Object> bacnetObjectIdToJ(Nan::HandleScope *scope, BACNET_OBJECT_ID *obj_id) {
+    Local<Object> obj = Nan::New<Object>();
+    Nan::Set(obj, Nan::New("type").ToLocalChecked(), Nan::New(obj_id->type));
+    Nan::Set(obj, Nan::New("instance").ToLocalChecked(), Nan::New(obj_id->instance));
+    return obj;
+}
+
+Local<Array> bacnetPropertyValueToJ(Nan::HandleScope *scope, BACNET_PROPERTY_VALUE *values) {
+    Local<Array> jVals = Nan::New<Array>();
+    int i = 0;
+    while (values) {
+        BACNET_APPLICATION_DATA_VALUE *value = &values->value;
+        if (value->tag == BACNET_APPLICATION_TAG_REAL) {
+            Local<Value> jVal = bacnetApplicationValueToJ(scope, value);
+            Nan::Set(jVals, Nan::New(i++), jVal);
+        }
+        if (values->next) {
+            values++;
+        } else {
+            break;
+        }
+    }
+    return jVals;
+}
+
+Local<Object> bacnetCovDataToJ(Nan::HandleScope *scope, BACNET_COV_DATA *cov_data) {
+    Local<Object> obj = Nan::New<Object>();
+    Nan::Set(obj, Nan::New("pid").ToLocalChecked(), Nan::New(cov_data->subscriberProcessIdentifier));
+    Nan::Set(obj, Nan::New("device_id").ToLocalChecked(), Nan::New(cov_data->initiatingDeviceIdentifier));
+    Nan::Set(obj, Nan::New("obj_id").ToLocalChecked(),
+            bacnetObjectIdToJ(scope, &cov_data->monitoredObjectIdentifier));
+    Nan::Set(obj, Nan::New("time_remaining").ToLocalChecked(), Nan::New(cov_data->timeRemaining));
+    Nan::Set(obj, Nan::New("values").ToLocalChecked(),
+            bacnetPropertyValueToJ(scope, cov_data->listOfValues));
+    return obj;
 }

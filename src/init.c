@@ -44,6 +44,11 @@ void init_device_service_handlers() {
     fprintf(stderr, "Initialise device handlers\n");
     apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_WHO_IS, handler_who_is);
     apdu_set_confirmed_handler(SERVICE_CONFIRMED_WRITE_PROPERTY, handler_write_property);
+    /* handle cov notifications */
+    apdu_set_confirmed_handler(SERVICE_CONFIRMED_COV_NOTIFICATION,
+        handler_ccov_notification);
+    apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_COV_NOTIFICATION,
+        handler_ucov_notification);
 }
 
 /** Register as a Foreign Device with the designated BBMD.

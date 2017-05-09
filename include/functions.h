@@ -17,5 +17,7 @@ NAN_METHOD(listen);
 NAN_METHOD(initClient);
 NAN_METHOD(initDevice);
 NAN_METHOD(closeQueue);
+NAN_METHOD(subscribeCov);
+NAN_METHOD(timeSync);
 
 #endif
