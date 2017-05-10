@@ -13,7 +13,6 @@ function BACnetInstance (config) {
   const confirmedCallbacks = {}
   setupMethods.call(this, bacnetAddon, confirmedCallbacks)
   setupHandlers.call(this, confirmedCallbacks)
-  setupEnums.call(this, bacnetAddon)
 }
 
 function setupMethods (bacnetAddon, confirmedCallbacks) {
@@ -87,13 +86,8 @@ function setupHandlers (confirmedCallbacks) {
   })
 }
 
-function setupEnums (bacnetAddon) {
-  this.BACNET_OBJECT_TYPE = bacnetAddon.BACNET_OBJECT_TYPE
-  this.BACNET_APPLICATION_TAG = bacnetAddon.BACNET_APPLICATION_TAG
-}
-
 function flattenConfig (config) {
-  var flatConfig = (config && config.datalink) || {} // I've flattened the config as I had trouble getting nested properties in the c++
+  var flatConfig = config && config.datalink || {} // I've flattened the config as I had trouble getting nested properties in the c++
   flatConfig.device_instance_id = config.device_instance_id
   return flatConfig
 }
