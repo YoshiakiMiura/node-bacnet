@@ -139,5 +139,4 @@ describe('bacnet enum conversions', () => {
       }, /17/, 'no error was thrown for invalid application tag 17')
     })
   })
-
 })

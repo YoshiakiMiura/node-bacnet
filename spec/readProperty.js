@@ -46,23 +46,23 @@ describe('Read property', function () {
     readOwnDeviceObjectPropertyTest('protocol-revision', [14])
     // readOwnDeviceObjectPropertyTest('protocol-services-supported', [])
     readOwnDeviceObjectPropertyTest('object-list', [
-      {type: 'device', instance: 260001}
-    , {instance: 0, type: 'analog-input'}
-    , {instance: 1, type: 'analog-input'}
-    , {instance: 2, type: 'analog-input'}
-    , {instance: 3, type: 'analog-input'}
-    , {instance: 0, type: 'analog-output'}
-    , {instance: 1, type: 'analog-output'}
-    , {instance: 2, type: 'analog-output'}
-    , {instance: 3, type: 'analog-output'}
-    , {instance: 0, type: 'binary-output'}
-    , {instance: 1, type: 'binary-output'}
-    , {instance: 2, type: 'binary-output'}
-    , {instance: 3, type: 'binary-output'}
-    , {instance: 0, type: 'multi-state-input'}
-    , {instance: 1, type: 'multi-state-input'}
-    , {instance: 2, type: 'multi-state-input'}
-    , {instance: 3, type: 'multi-state-input'}
+      {type: 'device', instance: 260001},
+      {instance: 0, type: 'analog-input'},
+      {instance: 1, type: 'analog-input'},
+      {instance: 2, type: 'analog-input'},
+      {instance: 3, type: 'analog-input'},
+      {instance: 0, type: 'analog-output'},
+      {instance: 1, type: 'analog-output'},
+      {instance: 2, type: 'analog-output'},
+      {instance: 3, type: 'analog-output'},
+      {instance: 0, type: 'binary-output'},
+      {instance: 1, type: 'binary-output'},
+      {instance: 2, type: 'binary-output'},
+      {instance: 3, type: 'binary-output'},
+      {instance: 0, type: 'multi-state-input'},
+      {instance: 1, type: 'multi-state-input'},
+      {instance: 2, type: 'multi-state-input'},
+      {instance: 3, type: 'multi-state-input'}
     ])
     readOwnDeviceObjectPropertyTest('max-apdu-length-accepted', [1476])
     readOwnDeviceObjectPropertyTest('segmentation-supported', ['no-segmentation'])
