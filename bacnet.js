@@ -87,7 +87,7 @@ function setupHandlers (confirmedCallbacks) {
 }
 
 function flattenConfig (config) {
-  var flatConfig = config && config.datalink || {} // I've flattened the config as I had trouble getting nested properties in the c++
+  var flatConfig = config && (config.datalink || {}) // I've flattened the config as I had trouble getting nested properties in the c++
   flatConfig.device_instance_id = config.device_instance_id
   return flatConfig
 }
