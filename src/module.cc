@@ -80,6 +80,10 @@ NAN_MODULE_INIT(InitModule) {
       Nan::GetFunction(New<FunctionTemplate>(propertyKeyToString)).ToLocalChecked());
     Nan::Set(target, New("propertyKeyToNumber").ToLocalChecked(),
       Nan::GetFunction(New<FunctionTemplate>(propertyKeyToNumber)).ToLocalChecked());
+    Nan::Set(target, New("applicationTagToString").ToLocalChecked(),
+      Nan::GetFunction(New<FunctionTemplate>(applicationTagToString)).ToLocalChecked());
+    Nan::Set(target, New("applicationTagToNumber").ToLocalChecked(),
+      Nan::GetFunction(New<FunctionTemplate>(applicationTagToNumber)).ToLocalChecked());
 
     BacnetValue::Init(target);
 }

@@ -115,6 +115,61 @@ NAN_METHOD(propertyKeyToNumber) {
     }
 }
 
+// Returns the application tag string for the application tag number provided. If a string is provided it is checked for validity and returned
+NAN_METHOD(applicationTagToString) {
+    std::ostringstream errorStringStream;
+    std::string inputString = extractString(info[0].As<v8::String>());
+    if (info.Length() >= 1 && info[0]->IsString()) {
+        unsigned index;
+        if (bactext_application_tag_index(inputString.c_str(), &index)) {
+            const char * name = bactext_application_tag_name(index);
+            info.GetReturnValue().Set(Nan::New(name).ToLocalChecked());
+        } else {
+            errorStringStream << "Application tag string not valid" << ", provided : " << inputString;
+            Nan::ThrowError(errorStringStream.str().c_str());
+         }
+    } else if (info.Length() >= 1 && info[0]->IsUint32()) {
+        uint32_t applicationTag = info[0]->ToUint32()->Value();
+        if (applicationTag <= MAX_BACNET_APPLICATION_TAG) {
+            const char * name = bactext_application_tag_name(applicationTag);
+            info.GetReturnValue().Set(Nan::New(name).ToLocalChecked());
+        } else {
+            errorStringStream << "Application tag too large, maximum is " << MAX_BACNET_APPLICATION_TAG << ", provided : " << inputString;
+            Nan::ThrowRangeError(errorStringStream.str().c_str());
+        }
+    } else {
+        errorStringStream << "Application tag must be either a string or unsigned int" << ", provided : " << inputString;
+        Nan::ThrowError(errorStringStream.str().c_str());
+    }
+}
+
+// Returns the application tag number for a application tag string provided. If a number is provided it is checked for validity and returned
+NAN_METHOD(applicationTagToNumber) {
+    std::ostringstream errorStringStream;
+    std::string inputString = extractString(info[0].As<v8::String>());
+    if (info.Length() >= 1 && info[0]->IsString()) {
+        unsigned index;
+        if (bactext_application_tag_index(inputString.c_str(), &index)) {
+            info.GetReturnValue().Set(Nan::New(index));
+        } else {
+            errorStringStream << "Application tag string not valid" << ", provided : " << inputString;
+            Nan::ThrowError(errorStringStream.str().c_str());
+        }
+    } else if (info.Length() >= 1 && info[0]->IsUint32()) {
+        uint32_t applicationTag = info[0]->ToUint32()->Value();
+        if (applicationTag <= MAX_BACNET_APPLICATION_TAG) {
+            info.GetReturnValue().Set(Nan::New(applicationTag));
+        } else {
+            errorStringStream << "Application tag too large, maximum is " << MAX_BACNET_APPLICATION_TAG << ", provided : " << inputString;
+            Nan::ThrowRangeError(errorStringStream.str().c_str());
+        }
+    } else {
+        errorStringStream << "Property key must be either a string or unsigned int" << ", provided : " << inputString;
+        Nan::ThrowError(errorStringStream.str().c_str());
+    }
+}
+
+
 // whois([destination, [min_id , [max_id]]])
 // Send a whois request to the destination device, optionally specifying a minimum and maximum device id
 NAN_METHOD(whois) {
@@ -276,7 +331,6 @@ NAN_METHOD(subscribeCov) {
   unsigned max_apdu = 0;
 
   bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
-  uint32_t device_id = info[0]->ToUint32()->Value();
   int32_t object_type = info[1]->ToInt32()->Value();
   int32_t object_instance = info[2]->ToInt32()->Value();
   uint32_t pid = info[3]->ToUint32()->Value();
@@ -290,7 +344,7 @@ NAN_METHOD(subscribeCov) {
       cov_data->lifetime = 0;
       // confirmed or unconfirmed
       cov_data->issueConfirmedNotifications = type == "confirmed" ;
-      int invoke_id = Send_COV_Subscribe(device_id, cov_data);
+      int invoke_id = Send_COV_Subscribe_Address(&dest, max_apdu, cov_data);
 
       info.GetReturnValue().Set(Nan::New(invoke_id));
   } else {

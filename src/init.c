@@ -34,6 +34,7 @@ void init_service_handlers() {
     apdu_set_error_handler(SERVICE_CONFIRMED_READ_PROPERTY, handler_error);
 
     apdu_set_confirmed_simple_ack_handler(SERVICE_CONFIRMED_WRITE_PROPERTY, handler_write_property_ack);
+    apdu_set_confirmed_simple_ack_handler(SERVICE_CONFIRMED_SUBSCRIBE_COV, handler_subscribe_cov_ack);
     apdu_set_error_handler(SERVICE_CONFIRMED_WRITE_PROPERTY, handler_error);
     /* handle any errors coming back */
     apdu_set_abort_handler(handler_abort);
@@ -44,7 +45,8 @@ void init_device_service_handlers() {
     fprintf(stderr, "Initialise device handlers\n");
     apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_WHO_IS, handler_who_is);
     apdu_set_confirmed_handler(SERVICE_CONFIRMED_WRITE_PROPERTY, handler_write_property);
-    /* handle cov notifications */
+    apdu_set_confirmed_handler(SERVICE_CONFIRMED_SUBSCRIBE_COV,
+        handler_cov_subscribe);
     apdu_set_confirmed_handler(SERVICE_CONFIRMED_COV_NOTIFICATION,
         handler_ccov_notification);
     apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_COV_NOTIFICATION,

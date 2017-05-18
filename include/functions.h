@@ -8,6 +8,8 @@ NAN_METHOD(objectTypeToString);
 NAN_METHOD(objectTypeToNumber);
 NAN_METHOD(propertyKeyToString);
 NAN_METHOD(propertyKeyToNumber);
+NAN_METHOD(applicationTagToString);
+NAN_METHOD(applicationTagToNumber);
 
 NAN_METHOD(whois);
 NAN_METHOD(isBound);

@@ -14,6 +14,9 @@ function initializeDevice (config) {
     device.on('write-property-ack', function (event, invokeId) {
       process.send({type: 'write-property-ack', event: event})
     })
+    device.on('subscribe-cov-ack', function (event, invokeId) {
+      process.send({type: 'subscribe-cov-ack', event: event})
+    })
     device.on('ack', function (invokeId, event) {
       process.send({type: 'ack', event: invokeId}) // TODO : test framework improvement to get the invoke id and event
     })

@@ -89,4 +89,55 @@ describe('bacnet enum conversions', () => {
       }, /4194304/, 'no error was thrown for invalid property key 4194304')
     })
   })
+
+  describe('applicationTagToString', () => {
+    it('converts 0 to "Null"', () => {
+      bacnet.applicationTagToString(0).should.equal('Null')
+    })
+    it('converts "Null" to "Null"', () => {
+      bacnet.applicationTagToString('Null').should.equal('Null')
+    })
+    it('errors on "foo"', () => {
+      should.throws(() => {
+        bacnet.applicationTagToString('foo')
+      }, /foo/, 'no error was thrown for invalid application tag "foo"')
+    })
+    it('errors on -1', () => {
+      should.throws(() => {
+        bacnet.applicationTagToString(-1)
+      }, /-1/, 'no error was thrown for invalid application tag -1')
+    })
+    it('errors on 17', () => {
+      should.throws(() => {
+        bacnet.applicationTagToString(17)
+      }, /17/, 'no error was thrown for invalid application tag 17')
+    })
+  })
+  describe('applicationTagToNumber', () => {
+    it('doesnt change 0', () => {
+      bacnet.applicationTagToNumber(0).should.equal(0)
+    })
+    it('converts "Null" to 0', () => {
+      bacnet.applicationTagToNumber('Null').should.equal(0)
+    })
+    it('doesnt change proprietary application tags', () => {
+      bacnet.applicationTagToNumber(16).should.equal(16)
+    })
+    it('errors on "foo"', () => {
+      should.throws(() => {
+        bacnet.applicationTagToNumber('foo')
+      }, /foo/, 'no error was thrown for invalid application tag "foo"')
+    })
+    it('errors on -1', () => {
+      should.throws(() => {
+        bacnet.applicationTagToNumber(-1)
+      }, /-1/, 'no error was thrown for invalid application tag -1')
+    })
+    it('errors on 17', () => {
+      should.throws(() => {
+        bacnet.applicationTagToNumber(17)
+      }, /17/, 'no error was thrown for invalid application tag 17')
+    })
+  })
+
 })

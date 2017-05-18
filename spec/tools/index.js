@@ -22,6 +22,10 @@ function writeProperty (device, objectType, objectInstance, propertyId, arrayInd
   this.send({method: 'writeProperty', args: Array.from(arguments)})
 }
 
+function subscribeCov (device, objectType, objectInstance, pid, confirmed) {
+  this.send({method: 'subscribeCov', args: Array.from(arguments)})
+}
+
 // Starts a Bacnet device in a child process
 exports.deviceProcess = function deviceProcess (config) {
   const device = fork(path.join(__dirname, '/deviceFromString.js'))
@@ -30,6 +34,7 @@ exports.deviceProcess = function deviceProcess (config) {
   device.whois = whois
   device.readProperty = readProperty
   device.writeProperty = writeProperty
+  device.subscribeCov = subscribeCov
   device.once('message', function (message) {
     if (message) { // init error
       runningDeviceMessage.bind(device)(message)

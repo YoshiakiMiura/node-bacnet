@@ -48,11 +48,11 @@
 #include "timer.h"
 /* include the device object */
 #include "device.h"
-//#include "ai.h"
-//#include "ao.h"
+#include "ai.h"
+#include "ao.h"
 //#include "av.h"
 //#include "bi.h"
-//#include "bo.h"
+#include "bo.h"
 //#include "bv.h"
 //#include "channel.h"
 //#include "command.h"
@@ -60,7 +60,7 @@
 //#include "iv.h"
 //#include "lc.h"
 //#include "lsp.h"
-//#include "ms-input.h"
+#include "ms-input.h"
 //#include "mso.h"
 //#include "msv.h"
 //#include "osv.h"
@@ -113,6 +113,66 @@ static object_functions_t My_Object_Table[] = {
             NULL /* COV */ ,
             NULL /* COV Clear */ ,
         NULL /* Intrinsic Reporting */ },/* many more device types to support - see device.c in demo */
+    {OBJECT_ANALOG_INPUT,
+            Analog_Input_Init,
+            Analog_Input_Count,
+            Analog_Input_Index_To_Instance,
+            Analog_Input_Valid_Instance,
+            Analog_Input_Object_Name,
+            Analog_Input_Read_Property,
+            Analog_Input_Write_Property,
+            Analog_Input_Property_Lists,
+            NULL /* ReadRangeInfo */ ,
+            NULL /* Iterator */ ,
+            Analog_Input_Encode_Value_List,
+            Analog_Input_Change_Of_Value,
+            Analog_Input_Change_Of_Value_Clear,
+        Analog_Input_Intrinsic_Reporting},
+    {OBJECT_ANALOG_OUTPUT,
+            Analog_Output_Init,
+            Analog_Output_Count,
+            Analog_Output_Index_To_Instance,
+            Analog_Output_Valid_Instance,
+            Analog_Output_Object_Name,
+            Analog_Output_Read_Property,
+            Analog_Output_Write_Property,
+            Analog_Output_Property_Lists,
+            NULL /* ReadRangeInfo */ ,
+            NULL /* Iterator */ ,
+            NULL /* Value_Lists */ ,
+            NULL /* COV */ ,
+            NULL /* COV Clear */ ,
+        NULL /* Intrinsic Reporting */ },
+    {OBJECT_BINARY_OUTPUT,
+            Binary_Output_Init,
+            Binary_Output_Count,
+            Binary_Output_Index_To_Instance,
+            Binary_Output_Valid_Instance,
+            Binary_Output_Object_Name,
+            Binary_Output_Read_Property,
+            Binary_Output_Write_Property,
+            Binary_Output_Property_Lists,
+            NULL /* ReadRangeInfo */ ,
+            NULL /* Iterator */ ,
+            NULL /* Value_Lists */ ,
+            NULL /* COV */ ,
+            NULL /* COV Clear */ ,
+        NULL /* Intrinsic Reporting */ },
+    {OBJECT_MULTI_STATE_INPUT,
+            Multistate_Input_Init,
+            Multistate_Input_Count,
+            Multistate_Input_Index_To_Instance,
+            Multistate_Input_Valid_Instance,
+            Multistate_Input_Object_Name,
+            Multistate_Input_Read_Property,
+            Multistate_Input_Write_Property,
+            Multistate_Input_Property_Lists,
+            NULL /* ReadRangeInfo */ ,
+            NULL /* Iterator */ ,
+            NULL /* Value_Lists */ ,
+            NULL /* COV */ ,
+            NULL /* COV Clear */ ,
+        NULL /* Intrinsic Reporting */ },
     {MAX_BACNET_OBJECT_TYPE,
             NULL /* Init */ ,
             NULL /* Count */ ,
@@ -1721,7 +1781,7 @@ void Routing_Device_Init(
 
 #endif /* BAC_ROUTING */
 
-int handler_cov_encode_subscriptions(
+/*int handler_cov_encode_subscriptions(
     uint8_t * apdu,
     int max_apdu)
 {
@@ -1729,7 +1789,7 @@ int handler_cov_encode_subscriptions(
     max_apdu = max_apdu;
 
     return 0;
-}
+}*/
 
 #ifdef TEST
 #include <assert.h>
