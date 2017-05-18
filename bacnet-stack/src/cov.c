@@ -183,7 +183,8 @@ int cov_notify_decode_service_request(
     uint16_t decoded_type = 0;  /* for decoding */
     uint32_t property = 0;      /* for decoding */
     BACNET_PROPERTY_VALUE *value = NULL;        /* value in list */
-	BACNET_APPLICATION_DATA_VALUE *app_data = NULL;
+    BACNET_APPLICATION_DATA_VALUE *app_data = NULL;
+
 
     if (apdu_len && data) {
         /* tag 0 - subscriberProcessIdentifier */
