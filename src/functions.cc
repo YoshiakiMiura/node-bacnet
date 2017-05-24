@@ -337,18 +337,18 @@ NAN_METHOD(subscribeCov) {
   std::string type = extractString(info[4].As<v8::String>());
 
   if (addressed) {
-      BACNET_SUBSCRIBE_COV_DATA *cov_data = new BACNET_SUBSCRIBE_COV_DATA;
-      cov_data->monitoredObjectIdentifier.type = object_type;
-      cov_data->monitoredObjectIdentifier.instance = object_instance;
-      cov_data->subscriberProcessIdentifier = pid;
-      cov_data->lifetime = 0;
-      // confirmed or unconfirmed
-      cov_data->issueConfirmedNotifications = type == "confirmed" ;
-      int invoke_id = Send_COV_Subscribe_Address(&dest, max_apdu, cov_data);
+    BACNET_SUBSCRIBE_COV_DATA *cov_data = new BACNET_SUBSCRIBE_COV_DATA;
+    cov_data->monitoredObjectIdentifier.type = object_type;
+    cov_data->monitoredObjectIdentifier.instance = object_instance;
+    cov_data->subscriberProcessIdentifier = pid;
+    cov_data->lifetime = 0;
+    // confirmed or unconfirmed
+    cov_data->issueConfirmedNotifications = type == "confirmed" ;
+    int invoke_id = Send_COV_Subscribe_Address(&dest, max_apdu, cov_data);
 
-      info.GetReturnValue().Set(Nan::New(invoke_id));
+    info.GetReturnValue().Set(Nan::New(invoke_id));
   } else {
-      Nan::ThrowError("Unable to resolve address for subscribe.");
+    Nan::ThrowError("Unable to resolve address for subscribe.");
   }
 }
 
@@ -376,6 +376,34 @@ NAN_METHOD(timeSync) {
 
     Send_TimeSync_Remote(&dest, &bdate, &btime);
   } else {
-      Nan::ThrowError("Unable to resolve address for time sync.");
+    Nan::ThrowError("Unable to resolve address for time sync.");
   }
+}
+
+// sendUCov(pid, deviceId, objectType, objectId, time, propertyId, value)
+// Write a property to a remote device
+NAN_METHOD(sendUCov) {
+
+  BACNET_ADDRESS dest = {};
+  BACNET_COV_DATA cov_data;
+
+  bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
+  uint32_t pid = info[1]->ToInt32()->Value();
+  int32_t object_type = info[2]->ToInt32()->Value();
+  int32_t object_instance = info[3]->ToInt32()->Value();
+  int32_t time = info[4]->ToInt32()->Value();
+  int32_t object_property = info[5]->ToInt32()->Value();
+  Local<Array> values = Nan::To<Array>(info[6]).ToLocalChecked();
+  cov_data.subscriberProcessIdentifier = pid;
+  //cov_data.initiatingDeviceIdentifier = dest;
+  cov_data.monitoredObjectIdentifier.type = object_type;
+  cov_data.monitoredObjectIdentifier.instance = object_instance;
+  cov_data.timeRemaining = time;
+  cov_data.listOfValues = &values;
+
+  /** @file txbuf.c  Declare the global Transmit Buffer for handler functions. */
+
+  uint8_t Handler_Transmit_Buffer[MAX_PDU] = { 0 };
+
+  Send_UCOV_Notify_Address(&dest, &Handler_Transmit_Buffer[0], &cov_data);
 }

@@ -21,5 +21,6 @@ NAN_METHOD(initDevice);
 NAN_METHOD(closeQueue);
 NAN_METHOD(subscribeCov);
 NAN_METHOD(timeSync);
+NAN_METHOD(sendUCov);
 
 #endif

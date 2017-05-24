@@ -185,7 +185,6 @@ int cov_notify_decode_service_request(
     BACNET_PROPERTY_VALUE *value = NULL;        /* value in list */
     BACNET_APPLICATION_DATA_VALUE *app_data = NULL;
 
-
     if (apdu_len && data) {
         /* tag 0 - subscriberProcessIdentifier */
         if (decode_is_context_tag(&apdu[len], 0)) {
@@ -273,18 +272,19 @@ int cov_notify_decode_service_request(
             /* a tag number of 2 is not extended so only one octet */
             len++;
             app_data = &value->value;
-			while (!decode_is_closing_tag_number(&apdu[len], 2))
-			{
+            while (!decode_is_closing_tag_number(&apdu[len], 2)) {
                 if (app_data == NULL) {
                     /* out of room to store more values */
                     return BACNET_STATUS_ERROR;
                 }
-                app_len =
-                bacapp_decode_application_data(&apdu[len], apdu_len - len, app_data);
-				if (app_len < 0)
-				{
-					return BACNET_STATUS_ERROR;
-				}
+
+                app_len = IS_CONTEXT_SPECIFIC(apdu[len]) ?
+                    bacapp_decode_context_data(&apdu[len], apdu_len - len, app_data, property) :
+                    bacapp_decode_application_data(&apdu[len], apdu_len - len, app_data);
+
+                if (app_len < 0) {
+                    return BACNET_STATUS_ERROR;
+                }
                 len += app_len;
 
                 app_data = app_data->next;
