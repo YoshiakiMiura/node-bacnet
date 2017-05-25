@@ -82,6 +82,7 @@
         "bacnet-stack/src/bactext.c",
         "bacnet-stack/src/bip.c",
         "bacnet-stack/src/bvlc.c",
+        "bacnet-stack/src/datalink.c",
         "bacnet-stack/src/datetime.c",
         "bacnet-stack/src/indtext.c",
         "bacnet-stack/src/key.c",

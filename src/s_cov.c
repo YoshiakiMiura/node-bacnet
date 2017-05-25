@@ -1,12 +1,12 @@
 #include "cov.h"
+#include "npdu.h"
 
 int Send_UCOV_Notify_Address(
-    BACNET_ADDRESS dest,
+    BACNET_ADDRESS * dest,
     uint8_t * buffer,
     BACNET_COV_DATA * cov_data)
 {
     int pdu_len = 0;
-    BACNET_ADDRESS dest;
     int bytes_sent = 0;
     BACNET_NPDU_DATA npdu_data;
 

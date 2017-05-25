@@ -337,7 +337,7 @@ NAN_METHOD(subscribeCov) {
   std::string type = extractString(info[4].As<v8::String>());
 
   if (addressed) {
-    BACNET_SUBSCRIBE_COV_DATA *cov_data = new BACNET_SUBSCRIBE_COV_DATA;
+    BACNET_SUBSCRIBE_COV_DATA *cov_data = {};
     cov_data->monitoredObjectIdentifier.type = object_type;
     cov_data->monitoredObjectIdentifier.instance = object_instance;
     cov_data->subscriberProcessIdentifier = pid;
@@ -386,6 +386,8 @@ NAN_METHOD(sendUCov) {
 
   BACNET_ADDRESS dest = {};
   BACNET_COV_DATA cov_data;
+  BACNET_PROPERTY_VALUE * bPropVals = {};
+  unsigned max_apdu = 0;
 
   bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
   uint32_t pid = info[1]->ToInt32()->Value();
@@ -393,13 +395,30 @@ NAN_METHOD(sendUCov) {
   int32_t object_instance = info[3]->ToInt32()->Value();
   int32_t time = info[4]->ToInt32()->Value();
   int32_t object_property = info[5]->ToInt32()->Value();
-  Local<Array> values = Nan::To<Array>(info[6]).ToLocalChecked();
+  Local<v8::Array> values = Nan::To<Object>(info[6]).ToLocalChecked().As<v8::Array>();
+
+  int length = values->Length();
+  for (int i=0; i<length; i++) {
+    BacnetValue * bacnetValue = BacnetValue::Unwrap<BacnetValue>(values->Get(i)->ToObject());
+    BACNET_PROPERTY_VALUE bPropVal = {}; 
+    BACNET_APPLICATION_DATA_VALUE bAppDataVal = {};
+    if (bacnetValue->bacnetValue(&bAppDataVal)) {
+      bPropVal.propertyIdentifier = (BACNET_PROPERTY_ID) object_property;
+      bPropVal.value = bAppDataVal;
+      bPropVals[i] = bPropVal;
+    } else {
+      Nan::ThrowError("Invalid application data value.");
+    }
+  }
+  for (int i=0; i<length-1; i++)
+    bPropVals[i].next = &bPropVals[i+1];
+
   cov_data.subscriberProcessIdentifier = pid;
   //cov_data.initiatingDeviceIdentifier = dest;
   cov_data.monitoredObjectIdentifier.type = object_type;
   cov_data.monitoredObjectIdentifier.instance = object_instance;
   cov_data.timeRemaining = time;
-  cov_data.listOfValues = &values;
+  cov_data.listOfValues = bPropVals;
 
   /** @file txbuf.c  Declare the global Transmit Buffer for handler functions. */
 

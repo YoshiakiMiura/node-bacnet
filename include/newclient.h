@@ -34,7 +34,7 @@ void handler_subscribe_cov_ack(
     uint8_t invoke_id);
 
 int Send_UCOV_Notify_Address(
-    BACNET_ADDRESS dest,
+    BACNET_ADDRESS * dest,
     uint8_t * buffer,
     BACNET_COV_DATA * cov_data);
 
