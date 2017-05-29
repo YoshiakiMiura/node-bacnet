@@ -34,7 +34,7 @@ NAN_METHOD(objectTypeToString) {
             Nan::ThrowError(errorStringStream.str().c_str());
         }
     } else if (info.Length() >= 1 && info[0]->IsUint32()) {
-        const char * name = bactext_object_type_name(info[0]->ToUint32()->Value());
+        const char * name = bactext_object_type_name(info[0]->Uint32Value());
         info.GetReturnValue().Set(Nan::New(name).ToLocalChecked());
     } else {
         errorStringStream << "Object type must be either a string or unsigned int" << ", provided : " << inputString;
@@ -75,7 +75,7 @@ NAN_METHOD(propertyKeyToString) {
             Nan::ThrowError(errorStringStream.str().c_str());
          }
     } else if (info.Length() >= 1 && info[0]->IsUint32()) {
-        uint32_t propertyKey = info[0]->ToUint32()->Value();
+        uint32_t propertyKey = info[0]->Uint32Value();
         if (propertyKey <= MAX_BACNET_PROPERTY_ID) {
             const char * name = bactext_property_name(propertyKey);
             info.GetReturnValue().Set(Nan::New(name).ToLocalChecked());
@@ -102,7 +102,7 @@ NAN_METHOD(propertyKeyToNumber) {
             Nan::ThrowError(errorStringStream.str().c_str());
         }
     } else if (info.Length() >= 1 && info[0]->IsUint32()) {
-        uint32_t propertyKey = info[0]->ToUint32()->Value();
+        uint32_t propertyKey = info[0]->Uint32Value();
         if (propertyKey <= MAX_BACNET_PROPERTY_ID) {
             info.GetReturnValue().Set(Nan::New(propertyKey));
         } else {
@@ -129,7 +129,7 @@ NAN_METHOD(applicationTagToString) {
             Nan::ThrowError(errorStringStream.str().c_str());
          }
     } else if (info.Length() >= 1 && info[0]->IsUint32()) {
-        uint32_t applicationTag = info[0]->ToUint32()->Value();
+        uint32_t applicationTag = info[0]->Uint32Value();
         if (applicationTag <= MAX_BACNET_APPLICATION_TAG) {
             const char * name = bactext_application_tag_name(applicationTag);
             info.GetReturnValue().Set(Nan::New(name).ToLocalChecked());
@@ -156,7 +156,7 @@ NAN_METHOD(applicationTagToNumber) {
             Nan::ThrowError(errorStringStream.str().c_str());
         }
     } else if (info.Length() >= 1 && info[0]->IsUint32()) {
-        uint32_t applicationTag = info[0]->ToUint32()->Value();
+        uint32_t applicationTag = info[0]->Uint32Value();
         if (applicationTag <= MAX_BACNET_APPLICATION_TAG) {
             info.GetReturnValue().Set(Nan::New(applicationTag));
         } else {
@@ -178,10 +178,10 @@ NAN_METHOD(whois) {
     BACNET_ADDRESS dest = bacnetAddressToC(info[0]);
 
     if (info.Length() > 1) {
-        min_id = max_id = info[1]->ToInt32()->Value();
+        min_id = max_id = info[1]->Int32Value();
     }
     if (info.Length() > 2) {
-        max_id = info[2]->ToInt32()->Value();
+        max_id = info[2]->Int32Value();
     }
 
     if (min_id > BACNET_MAX_INSTANCE) {
@@ -205,7 +205,7 @@ NAN_METHOD(whois) {
 // up as a device id in the table of devices bound to addresses
 bool addressOrBoundDeviceIdToC(Local<Value> value, unsigned * max_apdu, BACNET_ADDRESS * dest) {
     if (value->IsNumber()) {  // device id
-        int32_t device_id = value->ToInt32()->Value();
+        int32_t device_id = value->Int32Value();
 
         /* is the device bound? */
         bool isBound = address_get_by_device(device_id, max_apdu, dest);
@@ -227,13 +227,13 @@ NAN_METHOD(readProperty) {
     unsigned max_apdu = 0;
 
     bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
-    int32_t object_type = info[1]->ToInt32()->Value();
-    int32_t object_instance = info[2]->ToInt32()->Value();
-    int32_t object_property = info[3]->ToInt32()->Value();
+    int32_t object_type = info[1]->Int32Value();
+    int32_t object_instance = info[2]->Int32Value();
+    int32_t object_property = info[3]->Int32Value();
     uint32_t array_index = BACNET_ARRAY_ALL;
 
     if (info[4]->IsUint32()) {
-        array_index = info[4]->ToUint32()->Value();
+        array_index = info[4]->Uint32Value();
     }
 
     if (addressed) {
@@ -257,7 +257,7 @@ NAN_METHOD(isBound) {
     BACNET_ADDRESS dest = {};
     unsigned max_apdu = 0;
 
-    int32_t device_id = info[0]->ToInt32()->Value();
+    int32_t device_id = info[0]->Int32Value();
     bool bound = address_get_by_device(device_id, &max_apdu, &dest);
     info.GetReturnValue().Set(Nan::New(bound));
 }
@@ -269,17 +269,17 @@ NAN_METHOD(writeProperty) {
     unsigned max_apdu = 0;
 
     bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
-    int32_t object_type = info[1]->ToInt32()->Value();
-    int32_t object_instance = info[2]->ToInt32()->Value();
-    int32_t object_property = info[3]->ToInt32()->Value();
+    int32_t object_type = info[1]->Int32Value();
+    int32_t object_instance = info[2]->Int32Value();
+    int32_t object_property = info[3]->Int32Value();
     uint32_t array_index = BACNET_ARRAY_ALL;
     if (info[4]->IsUint32()) {
-        array_index = info[4]->ToUint32()->Value();
+        array_index = info[4]->Uint32Value();
     }
     Local<Object> valueObject = Nan::To<Object>(info[5]).ToLocalChecked();
     uint8_t priority = BACNET_NO_PRIORITY;
     if (info[6]->IsUint32()) {
-        priority = info[6]->ToUint32()->Value();
+        priority = info[6]->Uint32Value();
     }
 
     if (addressed) {
@@ -331,9 +331,9 @@ NAN_METHOD(subscribeCov) {
   unsigned max_apdu = 0;
 
   bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
-  int32_t object_type = info[1]->ToInt32()->Value();
-  int32_t object_instance = info[2]->ToInt32()->Value();
-  uint32_t pid = info[3]->ToUint32()->Value();
+  int32_t object_type = info[1]->Int32Value();
+  int32_t object_instance = info[2]->Int32Value();
+  uint32_t pid = info[3]->Uint32Value();
   std::string type = extractString(info[4].As<v8::String>());
 
   if (addressed) {
@@ -354,7 +354,7 @@ NAN_METHOD(subscribeCov) {
 
 // timeSync(deviceId, objectType, objectId, pid, type])
 NAN_METHOD(timeSync) {
-  BACNET_ADDRESS dest = { 0 };
+  BACNET_ADDRESS dest = {};
   unsigned max_apdu = 0;
   bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
   time_t rawtime;
@@ -386,43 +386,46 @@ NAN_METHOD(sendUCov) {
 
   BACNET_ADDRESS dest = {};
   BACNET_COV_DATA cov_data;
-  BACNET_PROPERTY_VALUE * bPropVals = {};
+  BACNET_PROPERTY_VALUE value_list = {};
   unsigned max_apdu = 0;
 
-  bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
-  uint32_t pid = info[1]->ToInt32()->Value();
-  int32_t object_type = info[2]->ToInt32()->Value();
-  int32_t object_instance = info[3]->ToInt32()->Value();
-  int32_t time = info[4]->ToInt32()->Value();
-  int32_t object_property = info[5]->ToInt32()->Value();
-  Local<v8::Array> values = Nan::To<Object>(info[6]).ToLocalChecked().As<v8::Array>();
+  bool addressed = addressOrBoundDeviceIdToC(info[1], &max_apdu, &dest);
 
-  int length = values->Length();
-  for (int i=0; i<length; i++) {
-    BacnetValue * bacnetValue = BacnetValue::Unwrap<BacnetValue>(values->Get(i)->ToObject());
-    BACNET_PROPERTY_VALUE bPropVal = {}; 
+  if (addressed) {
+
+    uint32_t pid = info[0]->Int32Value();
+    uint32_t initiatingDeviceIdentifier = info[1]->Int32Value();
+    int32_t object_type = info[2]->Int32Value();
+    int32_t object_instance = info[3]->Int32Value();
+    int32_t time = info[4]->Int32Value();
+    int32_t object_property = info[5]->Int32Value();
+    Local<Object> valueObject = Nan::To<Object>(info[6]).ToLocalChecked();
+
+    BacnetValue * bacnetValue = BacnetValue::Unwrap<BacnetValue>(valueObject);
     BACNET_APPLICATION_DATA_VALUE bAppDataVal = {};
     if (bacnetValue->bacnetValue(&bAppDataVal)) {
-      bPropVal.propertyIdentifier = (BACNET_PROPERTY_ID) object_property;
-      bPropVal.value = bAppDataVal;
-      bPropVals[i] = bPropVal;
+      value_list.propertyIdentifier = (BACNET_PROPERTY_ID) object_property;
+      value_list.value = bAppDataVal;
+      value_list.next = NULL;
     } else {
       Nan::ThrowError("Invalid application data value.");
     }
+
+
+    cov_data.subscriberProcessIdentifier = pid;
+    cov_data.initiatingDeviceIdentifier = initiatingDeviceIdentifier;
+    cov_data.monitoredObjectIdentifier.type = object_type;
+    cov_data.monitoredObjectIdentifier.instance = object_instance;
+    cov_data.timeRemaining = time;
+    cov_data.listOfValues = &value_list;
+
+    /** @file txbuf.c  Declare the global Transmit Buffer for handler functions. */
+
+    uint8_t Handler_Transmit_Buffer[MAX_PDU] = { 0 };
+
+    Send_UCOV_Notify(&Handler_Transmit_Buffer[0], &cov_data);
+
+  } else {
+    Nan::ThrowError("Unable to resolve address.");
   }
-  for (int i=0; i<length-1; i++)
-    bPropVals[i].next = &bPropVals[i+1];
-
-  cov_data.subscriberProcessIdentifier = pid;
-  //cov_data.initiatingDeviceIdentifier = dest;
-  cov_data.monitoredObjectIdentifier.type = object_type;
-  cov_data.monitoredObjectIdentifier.instance = object_instance;
-  cov_data.timeRemaining = time;
-  cov_data.listOfValues = bPropVals;
-
-  /** @file txbuf.c  Declare the global Transmit Buffer for handler functions. */
-
-  uint8_t Handler_Transmit_Buffer[MAX_PDU] = { 0 };
-
-  Send_UCOV_Notify_Address(&dest, &Handler_Transmit_Buffer[0], &cov_data);
 }

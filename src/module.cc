@@ -65,6 +65,8 @@ NAN_METHOD(InitInstance) {
       Nan::GetFunction(New<FunctionTemplate>(subscribeCov)).ToLocalChecked());
     Nan::Set(target, New("timeSync").ToLocalChecked(),
       Nan::GetFunction(New<FunctionTemplate>(timeSync)).ToLocalChecked());
+    Nan::Set(target, New("sendUCov").ToLocalChecked(),
+      Nan::GetFunction(New<FunctionTemplate>(sendUCov)).ToLocalChecked());
 
     info.GetReturnValue().Set(target);
 }

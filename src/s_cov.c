@@ -44,52 +44,6 @@
 
 /** @file s_cov.c  Send a Change of Value (COV) update or a Subscribe COV request. */
 
-int ucov_notify_encode_pdu(
-    uint8_t * buffer,
-    BACNET_ADDRESS * dest,
-    BACNET_NPDU_DATA * npdu_data,
-    BACNET_COV_DATA * cov_data)
-{
-    int len = 0;
-    int pdu_len = 0;
-    BACNET_ADDRESS my_address;
-    datalink_get_my_address(&my_address);
-
-    /* unconfirmed is a broadcast */
-    datalink_get_broadcast_address(dest);
-    /* encode the NPDU portion of the packet */
-    npdu_encode_npdu_data(npdu_data, false, MESSAGE_PRIORITY_NORMAL);
-    pdu_len = npdu_encode_pdu(&buffer[0], dest, &my_address, npdu_data);
-
-    /* encode the APDU portion of the packet */
-    len = ucov_notify_encode_apdu(&buffer[pdu_len], cov_data);
-    pdu_len += len;
-
-    return pdu_len;
-}
-
-/** Sends an Unconfirmed COV Notification.
- * @ingroup DSCOV
- *
- * @param buffer [in,out] The buffer to build the message in for sending.
- * @param cov_data [in]  The COV update information to be encoded.
- * @return Size of the message sent (bytes), or a negative value on error.
- */
-int Send_UCOV_Notify_Address(
-    BACNET_ADDRESS * dest,
-    uint8_t * buffer,
-    BACNET_COV_DATA * cov_data)
-{
-    int pdu_len = 0;
-    int bytes_sent = 0;
-    BACNET_NPDU_DATA npdu_data;
-
-    pdu_len = ucov_notify_encode_pdu(buffer, &dest, &npdu_data, cov_data);
-    bytes_sent = datalink_send_pdu(&dest, &npdu_data, &buffer[0], pdu_len);
-
-    return bytes_sent;
-}
-
 /** Sends a COV Subscription request.
  * @ingroup DSCOV
  * TODO

@@ -80,7 +80,7 @@ Local<String> bacnetPropertyEnumToJ(Nan::HandleScope *scope, BACNET_OBJECT_PROPE
     char str[20];
     int str_len = 20;
     char *char_str;
-    int ret_val = -1;
+    //int ret_val;
     BACNET_APPLICATION_DATA_VALUE *value = object_value->value;
     BACNET_PROPERTY_ID property = object_value->object_property;
     BACNET_OBJECT_TYPE object_type = object_value->object_type;
@@ -89,48 +89,49 @@ Local<String> bacnetPropertyEnumToJ(Nan::HandleScope *scope, BACNET_OBJECT_PROPE
         char_str = (char *) bactext_property_name_default(
             value->type.Enumerated, NULL);
         if (char_str) {
-            ret_val = snprintf(str, str_len, "%s", char_str);
+            //ret_val =
+              snprintf(str, str_len, "%s", char_str);
         } else {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "%lu",
                 (unsigned long) value->type.Enumerated);
         }
         break;
     case PROP_OBJECT_TYPE:
         if (value->type.Enumerated < MAX_ASHRAE_OBJECT_TYPE) {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "%s",
                 bactext_object_type_name(value->type.
                     Enumerated));
         } else if (value->type.Enumerated < 128) {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "reserved %lu",
                 (unsigned long) value->type.Enumerated);
         } else {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "proprietary %lu",
                 (unsigned long) value->type.Enumerated);
         }
         break;
     case PROP_EVENT_STATE:
-        ret_val =
+        //ret_val =
             snprintf(str, str_len, "%s",
             bactext_event_state_name(value->type.Enumerated));
         break;
     case PROP_UNITS:
         if (value->type.Enumerated < 256) {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "%s",
                 bactext_engineering_unit_name(value->
                     type.Enumerated));
         } else {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "proprietary %lu",
                 (unsigned long) value->type.Enumerated);
         }
         break;
     case PROP_POLARITY:
-        ret_val =
+        //ret_val =
             snprintf(str, str_len, "%s",
             bactext_binary_polarity_name(value->
                 type.Enumerated));
@@ -138,39 +139,39 @@ Local<String> bacnetPropertyEnumToJ(Nan::HandleScope *scope, BACNET_OBJECT_PROPE
     case PROP_PRESENT_VALUE:
     case PROP_RELINQUISH_DEFAULT:
         if (object_type < OBJECT_PROPRIETARY_MIN) {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "%s",
                 bactext_binary_present_value_name(value->type.
                     Enumerated));
         } else {
-            ret_val =
+            //ret_val =
                 snprintf(str, str_len, "%lu",
                 (unsigned long) value->type.Enumerated);
         }
         break;
     case PROP_RELIABILITY:
-        ret_val =
+        //ret_val =
             snprintf(str, str_len, "%s",
             bactext_reliability_name(value->type.Enumerated));
         break;
     case PROP_SYSTEM_STATUS:
-        ret_val =
+        //ret_val =
             snprintf(str, str_len, "%s",
             bactext_device_status_name(value->
                 type.Enumerated));
         break;
     case PROP_SEGMENTATION_SUPPORTED:
-        ret_val =
+        //ret_val =
             snprintf(str, str_len, "%s",
             bactext_segmentation_name(value->type.Enumerated));
         break;
     case PROP_NODE_TYPE:
-        ret_val =
+        //ret_val =
             snprintf(str, str_len, "%s",
             bactext_node_type_name(value->type.Enumerated));
         break;
     default:
-        ret_val =
+        //ret_val =
             snprintf(str, str_len, "%lu",
             (unsigned long) value->type.Enumerated);
         break;
@@ -268,7 +269,8 @@ Local<Value> bacnetApplicationDataToJ(Nan::HandleScope *scope,
         }
         return array;
     } else { // single array index
-        int value_length = bacapp_decode_application_data(application_data, application_data_len, &value);
+        //int value_length =
+          bacapp_decode_application_data(application_data, application_data_len, &value);
         object_value.array_index = data->array_index;
         return bacnetObjectPropertyValueToJ(scope, &object_value);
     }
@@ -323,10 +325,12 @@ Local<Array> bacnetPropertyValueToJ(Nan::HandleScope *scope, BACNET_PROPERTY_VAL
     int i = 0;
     while (values) {
         BACNET_APPLICATION_DATA_VALUE *value = &values->value;
-        if (value->tag == BACNET_APPLICATION_TAG_REAL) {
-            Local<Value> jVal = bacnetApplicationValueToJ(scope, value);
-            Nan::Set(jVals, Nan::New(i++), jVal);
-        }
+        Local<Object> bPropVal = Nan::New<Object>();
+        Nan::Set(bPropVal, Nan::New("propertyIdentifier").ToLocalChecked(),
+            Nan::New(values->propertyIdentifier));
+        Nan::Set(bPropVal, Nan::New("value").ToLocalChecked(),
+            bacnetApplicationValueToJ(scope, value));
+        Nan::Set(jVals, Nan::New(i++), bPropVal);
         if (values->next) {
             values++;
         } else {

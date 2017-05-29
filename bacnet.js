@@ -50,6 +50,7 @@ function setupMethods (bacnetAddon, confirmedCallbacks) {
 
   this.subscribeCov = bacnetAddon.subscribeCov
   this.timeSync = bacnetAddon.timeSync
+  this.sendUCov = bacnetAddon.sendUCov
 }
 
 function setupHandlers (confirmedCallbacks) {
