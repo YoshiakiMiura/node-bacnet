@@ -2147,6 +2147,13 @@ const char *bactext_device_status_name(
         ASHRAE_Reserved_String);
 }
 
+bool bactext_device_status_index(
+    const char *search_name,
+    unsigned *found_index)
+{
+    return indtext_by_istring(bacnet_device_status_names, search_name,
+        found_index);
+}
 INDTEXT_DATA bacnet_segmentation_names[] = {
     {SEGMENTATION_BOTH, "segmented-both"}
     ,

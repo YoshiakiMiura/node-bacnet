@@ -34,6 +34,7 @@
 #include "apdu.h"
 #include "npdu.h"
 #include "abort.h"
+#include "emitter.h"
 /* special for this module */
 #include "cov.h"
 #include "bactext.h"

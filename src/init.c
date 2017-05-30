@@ -51,6 +51,8 @@ void init_device_service_handlers() {
         handler_ccov_notification);
     apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_COV_NOTIFICATION,
         handler_ucov_notification);
+    apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_TIME_SYNCHRONIZATION,
+        handler_timesync);
 }
 
 /** Register as a Foreign Device with the designated BBMD.

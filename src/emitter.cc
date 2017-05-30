@@ -328,3 +328,40 @@ void emit_ucov(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data) {
     UCovEvent * event = new UCovEvent(src, cov_data);
     schedule(event);
 }
+
+
+class TSEvent: public NodeCallback {
+private:
+  BACNET_ADDRESS * _src;
+  BACNET_DATE * _bdate;
+  BACNET_TIME * _btime;
+
+public:
+    TSEvent(BACNET_ADDRESS *src, BACNET_DATE *bdate, BACNET_TIME *btime) {
+        _src = src;
+        _bdate = bdate;
+        _btime = btime;
+    }
+    void call() {
+        Nan::HandleScope scope;
+        Local<Object> localEventEmitter = Nan::New(eventEmitter);
+        Local<Value> argv[] = {
+            Nan::New("timesync").ToLocalChecked(),
+            bacnetAddressToJ(&scope, _src),
+            bacnetDateToJ(&scope, _bdate),
+            bacnetTimeToJ(&scope, _btime)
+        };
+
+        Nan::MakeCallback(localEventEmitter, "emit", 4, argv);
+    }
+};
+
+
+void emit_timesync(
+    BACNET_ADDRESS *src,
+    BACNET_DATE *bdate,
+    BACNET_TIME *btime)
+{
+    TSEvent * event = new TSEvent(src, bdate, btime);
+    schedule(event);
+}

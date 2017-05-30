@@ -33,6 +33,7 @@ void emit_error(
 
 void emit_ccov(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data);
 void emit_ucov(BACNET_ADDRESS *src, BACNET_COV_DATA *cov_data);
+void emit_timesync(BACNET_ADDRESS *src, BACNET_DATE *bdate, BACNET_TIME *btime);
 
 #ifdef __cplusplus
 }

@@ -290,7 +290,3 @@ const char * applicationTagToC(Local<Value> type, unsigned * index) {
         return "Application tag must be either a string or unsigned int";
     }
 }
-
-BACNET_PROPERTY_VALUE bacnetPropertyValueToC(int val) {
-}
-

@@ -34,6 +34,7 @@
         "src/h_errors.c",
         "src/h_ccov.c",
         "src/h_ucov.c",
+        "src/h_ts.c",
         "src/tsm.c",
         "bacnet-stack/demo/handler/h_npdu.c",
         "bacnet-stack/demo/handler/s_cov.c",

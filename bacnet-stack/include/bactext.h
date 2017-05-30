@@ -101,11 +101,14 @@ extern "C" {
         unsigned index);
     const char *bactext_device_status_name(
         unsigned index);
+    bool bactext_device_status_index(
+        const char *search_name,
+        unsigned *found_index);
     const char *bactext_segmentation_name(
         unsigned index);
-	bool bactext_segmentation_index(
-		const char *search_name,
-		unsigned *found_index);
+    bool bactext_segmentation_index(
+        const char *search_name,
+        unsigned *found_index);
     const char *bactext_node_type_name(
         unsigned index);
     const char *bactext_character_string_encoding_name(

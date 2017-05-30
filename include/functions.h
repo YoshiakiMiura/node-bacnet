@@ -10,6 +10,8 @@ NAN_METHOD(propertyKeyToString);
 NAN_METHOD(propertyKeyToNumber);
 NAN_METHOD(applicationTagToString);
 NAN_METHOD(applicationTagToNumber);
+NAN_METHOD(deviceStatusToString);
+NAN_METHOD(deviceStatusToNumber);
 
 NAN_METHOD(whois);
 NAN_METHOD(isBound);

@@ -34,6 +34,7 @@
 #include "apdu.h"
 #include "npdu.h"
 #include "abort.h"
+#include "emitter.h"
 /* special for this module */
 #include "cov.h"
 #include "bactext.h"
@@ -138,7 +139,7 @@ void handler_ccov_notification(
             pProperty_value = pProperty_value->next;
         }
 
-        emit_ccov(src, cov_data);
+        emit_ccov(src, &cov_data);
     }
 #endif
     /* bad decoding or something we didn't understand - send an abort */

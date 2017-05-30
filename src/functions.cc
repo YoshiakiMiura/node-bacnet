@@ -164,11 +164,62 @@ NAN_METHOD(applicationTagToNumber) {
             Nan::ThrowRangeError(errorStringStream.str().c_str());
         }
     } else {
-        errorStringStream << "Property key must be either a string or unsigned int" << ", provided : " << inputString;
+        errorStringStream << "Application tag must be either a string or unsigned int" << ", provided : " << inputString;
         Nan::ThrowError(errorStringStream.str().c_str());
     }
 }
 
+NAN_METHOD(deviceStatusToString) {
+    std::ostringstream errorStringStream;
+    std::string inputString = extractString(info[0].As<v8::String>());
+    if (info.Length() >= 1 && info[0]->IsString()) {
+        unsigned index;
+        if (bactext_device_status_index(inputString.c_str(), &index)) {
+            const char * name = bactext_device_status_name(index);
+            info.GetReturnValue().Set(Nan::New(name).ToLocalChecked());
+        } else {
+            errorStringStream << "Device status string not valid" << ", provided : " << inputString;
+            Nan::ThrowError(errorStringStream.str().c_str());
+         }
+    } else if (info.Length() >= 1 && info[0]->IsUint32()) {
+        uint32_t deviceStatus = info[0]->Uint32Value();
+        if (deviceStatus <= MAX_DEVICE_STATUS) {
+            const char * name = bactext_device_status_name(deviceStatus);
+            info.GetReturnValue().Set(Nan::New(name).ToLocalChecked());
+        } else {
+            errorStringStream << "Device status too large, maximum is " << MAX_DEVICE_STATUS << ", provided : " << inputString;
+            Nan::ThrowRangeError(errorStringStream.str().c_str());
+        }
+    } else {
+        errorStringStream << "Device status must be either a string or unsigned int" << ", provided : " << inputString;
+        Nan::ThrowError(errorStringStream.str().c_str());
+    }
+}
+
+NAN_METHOD(deviceStatusToNumber) {
+    std::ostringstream errorStringStream;
+    std::string inputString = extractString(info[0].As<v8::String>());
+    if (info.Length() >= 1 && info[0]->IsString()) {
+        unsigned index;
+        if (bactext_device_status_index(inputString.c_str(), &index)) {
+            info.GetReturnValue().Set(Nan::New(index));
+        } else {
+            errorStringStream << "Device status string not valid" << ", provided : " << inputString;
+            Nan::ThrowError(errorStringStream.str().c_str());
+        }
+    } else if (info.Length() >= 1 && info[0]->IsUint32()) {
+        uint32_t deviceStatus = info[0]->Uint32Value();
+        if (deviceStatus <= MAX_DEVICE_STATUS) {
+            info.GetReturnValue().Set(Nan::New(deviceStatus));
+        } else {
+            errorStringStream << "Device status too large, maximum is " << MAX_BACNET_APPLICATION_TAG << ", provided : " << inputString;
+            Nan::ThrowRangeError(errorStringStream.str().c_str());
+        }
+    } else {
+        errorStringStream << "Device status must be either a string or unsigned int" << ", provided : " << inputString;
+        Nan::ThrowError(errorStringStream.str().c_str());
+    }
+}
 
 // whois([destination, [min_id , [max_id]]])
 // Send a whois request to the destination device, optionally specifying a minimum and maximum device id

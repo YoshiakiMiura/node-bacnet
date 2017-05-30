@@ -86,6 +86,10 @@ NAN_MODULE_INIT(InitModule) {
       Nan::GetFunction(New<FunctionTemplate>(applicationTagToString)).ToLocalChecked());
     Nan::Set(target, New("applicationTagToNumber").ToLocalChecked(),
       Nan::GetFunction(New<FunctionTemplate>(applicationTagToNumber)).ToLocalChecked());
+    Nan::Set(target, New("deviceStatusToString").ToLocalChecked(),
+      Nan::GetFunction(New<FunctionTemplate>(deviceStatusToString)).ToLocalChecked());
+    Nan::Set(target, New("deviceStatusToNumber").ToLocalChecked(),
+      Nan::GetFunction(New<FunctionTemplate>(deviceStatusToNumber)).ToLocalChecked());
 
     BacnetValue::Init(target);
 }
