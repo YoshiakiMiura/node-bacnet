@@ -23,16 +23,12 @@ describe('Subscribe COV', function () {
   })
   // my writes dont currently support arrays - only single values
   describe('subscribe its own device object', function () {
-    it('confirmed', function () {
-      subscribeOwnDeviceObjectPropertyTest('analog-input', 'confirmed')
-      subscribeOwnDeviceObjectPropertyTest('multi-state-input', 'confirmed')
-    })
-    it('unconfirmed', function () {
-      subscribeOwnDeviceObjectPropertyTest('analog-input', 'unconfirmed')
-      subscribeOwnDeviceObjectPropertyTest('multi-state-input', 'unconfirmed')
-    })
+    subscribeOwnDeviceObjectPropertyTest('analog-input', 'confirmed')
+    subscribeOwnDeviceObjectPropertyTest('multi-state-input', 'confirmed')
+    subscribeOwnDeviceObjectPropertyTest('analog-input', 'unconfirmed')
+    subscribeOwnDeviceObjectPropertyTest('multi-state-input', 'unconfirmed')
     function subscribeOwnDeviceObjectPropertyTest (objectType, confirmed) {
-      it('can subscribe the \'' + objectType + '\' property', function (done) {
+      it(`can subscribe the ${objectType}(${confirmed}) property`, function (done) {
         device.once('subscribe-cov-ack', (property) => {
           done()
         })

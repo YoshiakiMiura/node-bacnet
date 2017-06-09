@@ -382,22 +382,23 @@ NAN_METHOD(subscribeCov) {
   unsigned max_apdu = 0;
 
   bool addressed = addressOrBoundDeviceIdToC(info[0], &max_apdu, &dest);
-  int32_t object_type = info[1]->Int32Value();
+  int16_t object_type = info[1]->Int32Value();
   int32_t object_instance = info[2]->Int32Value();
   uint32_t pid = info[3]->Uint32Value();
   std::string type = extractString(info[4].As<v8::String>());
 
   if (addressed) {
-    BACNET_SUBSCRIBE_COV_DATA *cov_data = {};
-    cov_data->monitoredObjectIdentifier.type = object_type;
-    cov_data->monitoredObjectIdentifier.instance = object_instance;
-    cov_data->subscriberProcessIdentifier = pid;
-    cov_data->lifetime = 0;
+    BACNET_SUBSCRIBE_COV_DATA cov_data = {};
+    cov_data.monitoredObjectIdentifier.type = object_type;
+    cov_data.monitoredObjectIdentifier.instance = object_instance;
+    cov_data.subscriberProcessIdentifier = pid;
+    cov_data.lifetime = 0;
     // confirmed or unconfirmed
-    cov_data->issueConfirmedNotifications = type == "confirmed" ;
-    int invoke_id = Send_COV_Subscribe_Address(&dest, max_apdu, cov_data);
+    cov_data.issueConfirmedNotifications = type == "confirmed" ;
+    int invoke_id = Send_COV_Subscribe_Address(&dest, max_apdu, &cov_data);
 
     info.GetReturnValue().Set(Nan::New(invoke_id));
+
   } else {
     Nan::ThrowError("Unable to resolve address for subscribe.");
   }
