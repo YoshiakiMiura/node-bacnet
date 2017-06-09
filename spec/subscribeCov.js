@@ -7,37 +7,40 @@ const tools = require('./tools')
 const iface = tools.getSuitableBroadcastInterface()
 
 describe('Subscribe COV', function () {
-  var device
-  after('Exit the device fork', function (done) {
-    device.once('exit', done)
-    device.exit()
-  })
-  before(function (done) {
-    device = tools.deviceProcess({
-      datalink: {
-        iface: iface
-      },
-      device: true
-    })
-    device.once('up', done)
-  })
-  // my writes dont currently support arrays - only single values
-  describe('subscribe its own device object', function () {
-    subscribeOwnDeviceObjectPropertyTest('analog-input', 'confirmed')
-    subscribeOwnDeviceObjectPropertyTest('multi-state-input', 'confirmed')
-    subscribeOwnDeviceObjectPropertyTest('analog-input', 'unconfirmed')
-    subscribeOwnDeviceObjectPropertyTest('multi-state-input', 'unconfirmed')
-    function subscribeOwnDeviceObjectPropertyTest (objectType, confirmed) {
-      it(`can subscribe the ${objectType}(${confirmed}) property`, function (done) {
-        device.once('subscribe-cov-ack', (property) => {
-          done()
-        })
-        const objectId = bacnet.objectTypeToNumber(objectType)
-        const instance = 2
-        const pid = 0
-        device.subscribeCov('127.0.0.1', objectId, instance, pid, confirmed)
-        device.once('error', done)
+  subscribe('analog-input', 'confirmed')
+  //subscribe('analog-input', 'unconfirmed')
+
+  function subscribe (objType, confirmed) {
+
+    it(`Subscribe COV for ${objType}(${confirmed})`, function(done) {
+      const serverDeviceId = 260001
+      const server = bacnet.init({
+        datalink: {
+          iface: iface
+        },
+        device: true,
+        device_instance_id: serverDeviceId
       })
-    }
-  })
+
+      server.once('iam', () => {
+        const client = bacnet.init({
+          datalink: {
+            iface: iface,
+            port: 0xBAC1,
+            bbmd_port: 0xBAC0,
+            bbmd_address: '127.0.0.1'
+          },
+          device: false,
+          device_instance_id: 260002
+        }).once('subscribe-cov-ack', done)
+
+        const objectId = bacnet.objectTypeToNumber(objType)
+        const instance = 0
+        const pid = 0
+        client.once('iam', (iam) => {
+          client.subscribeCov(serverDeviceId, objectId, instance, pid, confirmed)
+        }).whois()
+      }).whois()
+    })
+  }
 })
