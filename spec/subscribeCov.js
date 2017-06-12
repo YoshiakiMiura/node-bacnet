@@ -1,4 +1,4 @@
-/* global describe, it, before, after */
+/* global describe, it */
 
 require('should')
 const bacnet = require('../bacnet.js')
@@ -8,11 +8,10 @@ const iface = tools.getSuitableBroadcastInterface()
 
 describe('Subscribe COV', function () {
   subscribe('analog-input', 'confirmed')
-  //subscribe('analog-input', 'unconfirmed')
+  // subscribe('analog-input', 'unconfirmed')
 
   function subscribe (objType, confirmed) {
-
-    it(`Subscribe COV for ${objType}(${confirmed})`, function(done) {
+    it(`Subscribe COV for ${objType}(${confirmed})`, function (done) {
       const serverDeviceId = 260001
       const server = bacnet.init({
         datalink: {
