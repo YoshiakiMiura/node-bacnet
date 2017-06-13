@@ -37,7 +37,7 @@ describe('Subscribe COV', function () {
         const instance = 0
         const pid = 0
         client.once('iam', (iam) => {
-          client.subscribeCov(serverDeviceId, objectId, instance, pid, confirmed)
+          client.subscribeCov(serverDeviceId, objectId, instance, pid, confirmed).should.equal(1)
         }).whois()
       }).whois()
     })
