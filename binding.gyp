@@ -71,7 +71,7 @@
     {
       "target_name": "bacnet_stack",
       "type": "static_library",
-      "defines": ["PRINT_ENABLED=1", "__NO_STRING_INLINES"],
+      "defines": ["PRINT_ENABLED=1", "__NO_STRING_INLINES", "MAX_ANALOG_INPUTS=19999"],
       "sources": [
         "bacnet-stack/src/apdu.c",
         "bacnet-stack/src/npdu.c",
