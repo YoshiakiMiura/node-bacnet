@@ -194,6 +194,9 @@ int cov_notify_decode_service_request(
             len += decode_unsigned(&apdu[len], len_value, &decoded_value);
             data->subscriberProcessIdentifier = decoded_value;
         } else {
+#if PRINT_ENABLED
+            fprintf(stderr, "Error in subscriberProcessIdentifier");
+#endif
             return BACNET_STATUS_ERROR;
         }
         /* tag 1 - initiatingDeviceIdentifier */
@@ -208,6 +211,9 @@ int cov_notify_decode_service_request(
                 return BACNET_STATUS_ERROR;
             }
         } else {
+#if PRINT_ENABLED
+            fprintf(stderr, "Error in initiatingDeviceIdentifier");
+#endif
             return BACNET_STATUS_ERROR;
         }
         /* tag 2 - monitoredObjectIdentifier */
@@ -220,6 +226,9 @@ int cov_notify_decode_service_request(
                 &data->monitoredObjectIdentifier.instance);
             data->monitoredObjectIdentifier.type = decoded_type;
         } else {
+#if PRINT_ENABLED
+            fprintf(stderr, "Error in monitoredObjectIdentifier");
+#endif
             return BACNET_STATUS_ERROR;
         }
         /* tag 3 - timeRemaining */
@@ -230,10 +239,16 @@ int cov_notify_decode_service_request(
             len += decode_unsigned(&apdu[len], len_value, &decoded_value);
             data->timeRemaining = decoded_value;
         } else {
+#if PRINT_ENABLED
+            fprintf(stderr, "Error in timeRemaining");
+#endif
             return BACNET_STATUS_ERROR;
         }
         /* tag 4: opening context tag - listOfValues */
         if (!decode_is_opening_tag_number(&apdu[len], 4)) {
+#if PRINT_ENABLED
+            fprintf(stderr, "Error in listOfValues");
+#endif
             return BACNET_STATUS_ERROR;
         }
         /* a tag number of 4 is not extended so only one octet */
@@ -242,6 +257,9 @@ int cov_notify_decode_service_request(
         value = data->listOfValues;
         if (value == NULL) {
             /* no space to store any values */
+#if PRINT_ENABLED
+            fprintf(stderr, "Error no space to store any values");
+#endif
             return BACNET_STATUS_ERROR;
         }
         while (value != NULL) {
@@ -253,6 +271,9 @@ int cov_notify_decode_service_request(
                 len += decode_enumerated(&apdu[len], len_value, &property);
                 value->propertyIdentifier = (BACNET_PROPERTY_ID) property;
             } else {
+#if PRINT_ENABLED
+            fprintf(stderr, "Error in propertyIdentifier");
+#endif
                 return BACNET_STATUS_ERROR;
             }
             /* tag 1 - propertyArrayIndex OPTIONAL */
@@ -267,6 +288,9 @@ int cov_notify_decode_service_request(
             }
             /* tag 2: opening context tag - value */
             if (!decode_is_opening_tag_number(&apdu[len], 2)) {
+#if PRINT_ENABLED
+                fprintf(stderr, "Error in propertyArrayIndex");
+#endif
                 return BACNET_STATUS_ERROR;
             }
             /* a tag number of 2 is not extended so only one octet */
@@ -275,6 +299,9 @@ int cov_notify_decode_service_request(
             while (!decode_is_closing_tag_number(&apdu[len], 2)) {
                 if (app_data == NULL) {
                     /* out of room to store more values */
+#if PRINT_ENABLED
+                    fprintf(stderr, "out of room to store more values");
+#endif
                     return BACNET_STATUS_ERROR;
                 }
 
@@ -283,6 +310,9 @@ int cov_notify_decode_service_request(
                     bacapp_decode_application_data(&apdu[len], apdu_len - len, app_data);
 
                 if (app_len < 0) {
+#if PRINT_ENABLED
+                    fprintf(stderr, "app_len should not be negative");
+#endif
                     return BACNET_STATUS_ERROR;
                 }
                 len += app_len;
@@ -310,6 +340,9 @@ int cov_notify_decode_service_request(
             value = value->next;
             if (value == NULL) {
                 /* out of room to store more values */
+#if PRINT_ENABLED
+                fprintf(stderr, "value is null");
+#endif
                 return BACNET_STATUS_ERROR;
             }
         }
