@@ -311,6 +311,7 @@ int cov_notify_decode_service_request(
 
                 if (app_len < 0) {
 #if PRINT_ENABLED
+                    fprintf(stderr, "IS_CONTEXT_SPECIFIC = %d\n", IS_CONTEXT_SPECIFIC(apdu[len]));
                     fprintf(stderr, "app_len should not be negative");
 #endif
                     return BACNET_STATUS_ERROR;
