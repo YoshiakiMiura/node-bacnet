@@ -326,8 +326,15 @@ int bacapp_decode_application_data(
             if (value->tag != MAX_BACNET_APPLICATION_TAG) {
                 len += decode_len;
             } else {
+#if PRINT_ENABLED
+                fprintf(stderr, "max bacnet application tag");
+#endif
                 len = BACNET_STATUS_ERROR;
             }
+        } else {
+#if PRINT_ENABLED
+            fprintf(stderr, "failed to decode tag");
+#endif
         }
         value->next = NULL;
     }
