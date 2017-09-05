@@ -45,7 +45,7 @@ describe('Read property', function () {
     readOwnDeviceObjectPropertyTest('protocol-version', [1])
     readOwnDeviceObjectPropertyTest('protocol-revision', [14])
     // readOwnDeviceObjectPropertyTest('protocol-services-supported', [])
-    readOwnDeviceObjectPropertyTest('object-list', [
+    /*readOwnDeviceObjectPropertyTest('object-list', [
       {type: 'device', instance: 260001},
       {instance: 0, type: 'analog-input'},
       {instance: 1, type: 'analog-input'},
@@ -63,7 +63,7 @@ describe('Read property', function () {
       {instance: 1, type: 'multi-state-input'},
       {instance: 2, type: 'multi-state-input'},
       {instance: 3, type: 'multi-state-input'}
-    ])
+    ])*/
     readOwnDeviceObjectPropertyTest('max-apdu-length-accepted', [1476])
     readOwnDeviceObjectPropertyTest('segmentation-supported', ['no-segmentation'])
     readOwnDeviceObjectPropertyTest('apdu-timeout', [3000])
