@@ -272,7 +272,7 @@ int cov_notify_decode_service_request(
                 value->propertyIdentifier = (BACNET_PROPERTY_ID) property;
             } else {
 #if PRINT_ENABLED
-            fprintf(stderr, "Error in propertyIdentifier");
+                fprintf(stderr, "Error in propertyIdentifier");
 #endif
                 return BACNET_STATUS_ERROR;
             }
@@ -295,12 +295,19 @@ int cov_notify_decode_service_request(
             }
             /* a tag number of 2 is not extended so only one octet */
             len++;
+	    // nested tag 2
+            if (decode_is_opening_tag_number(&apdu[len], 2)) {
+                len++;
+#if PRINT_ENABLED
+                fprintf(stderr, "opening nested context tag 2\n");
+#endif
+            }
             app_data = &value->value;
             while (!decode_is_closing_tag_number(&apdu[len], 2)) {
                 if (app_data == NULL) {
                     /* out of room to store more values */
 #if PRINT_ENABLED
-                    fprintf(stderr, "out of room to store more values");
+                    fprintf(stderr, "out of room to store more values\n");
 #endif
                     return BACNET_STATUS_ERROR;
                 }
@@ -319,6 +326,12 @@ int cov_notify_decode_service_request(
             }
             /* a tag number of 2 is not extended so only one octet */
             len++;
+            if (decode_is_closing_tag_number(&apdu[len], 2)) {
+#if PRINT_ENABLED
+                fprintf(stderr, "closing nested context tag 2\n");
+#endif
+                len++;
+            }
             /* tag 3 - priority OPTIONAL */
             if (decode_is_context_tag(&apdu[len], 3)) {
                 len +=
@@ -1087,6 +1100,53 @@ void testCOVSubscribeProperty(
     testCOVSubscribePropertyEncoding(pTest, invoke_id, &data);
 }
 
+void testCOVDecode(
+    Test * pTest)
+{
+    int MAX_COV_PROPERTIES = 8;
+    unsigned service_len = 44;
+    // dump from wireshark
+    uint8_t service_request[44] = {
+//0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x38, 0xe0, /* ......8. */
+//0x8e, 0xff, 0x70, 0xfe, 0x08, 0x00, 0x45, 0x00, /* ..p...E. */
+//0x00, 0x50, 0x00, 0x00, 0x40, 0x00, 0x40, 0x11, /* .P..@.@. */
+//0xef, 0x5b, 0xc0, 0xa8, 0x64, 0xf1, 0xc0, 0xa8, /* .[..d... */
+//0x64, 0xff, 0xba, 0xc0, 0xba, 0xc0, 0x00, 0x3c, /* d......< */
+//0xd4, 0x35, 0x81, 0x0b, 0x00, 0x34, 0x01, 0x00, /* .5...4.. */
+/*0x10, 0x02,*/ 0x09, 0x00, 0x1c, 0x02, 0x00, 0x00, /* ........ */
+0xf1, 0x2c, 0x02, 0x00, 0x00, 0xf1, 0x39, 0x00, /* .,....9. */
+0x4e, 0x09, 0x70, 0x2e, 0x91, 0x03, 0x2f, 0x09, /* N.p.../. */
+0xcb, 0x2e, 0x2e, 0xa4, 0x75, 0x09, 0x04, 0x01, /* ....u... */
+0xb4, 0x10, 0x2d, 0x32, 0x00, 0x2f, 0x2f, 0x09, /* ..-2.//. */
+0xc4, 0x2e, 0x91, 0x00, 0x2f, 0x4f              /* ..../O */
+};
+    BACNET_COV_DATA cov_data;
+    BACNET_PROPERTY_VALUE property_value[MAX_COV_PROPERTIES];
+    BACNET_PROPERTY_VALUE *pProperty_value = NULL;
+    BACNET_APPLICATION_DATA_VALUE app_data;
+    int len = 0;
+    unsigned index = 0;
+    pProperty_value = &property_value[0];
+    while (pProperty_value) {
+        index++;
+        if (index < MAX_COV_PROPERTIES) {
+            pProperty_value->next = &property_value[index];
+            (&pProperty_value->value)->next = &app_data;
+        } else {
+            pProperty_value->next = NULL;
+        }
+        pProperty_value = pProperty_value->next;
+    }
+    cov_data.listOfValues = &property_value[0];
+#if PRINT_ENABLED
+    fprintf(stderr, "UCOV: Received Notification!\n");
+#endif
+    /* decode the service request only */
+    len = cov_notify_decode_service_request(
+                service_request, service_len, &cov_data);
+    ct_test(pTest, len > 0);
+
+}
 #ifdef TEST_COV
 int main(
     int argc,
@@ -1102,6 +1162,8 @@ int main(
     rc = ct_addTestFunction(pTest, testCOVSubscribe);
     assert(rc);
     rc = ct_addTestFunction(pTest, testCOVSubscribeProperty);
+    assert(rc);
+    rc = ct_addTestFunction(pTest, testCOVDecode);
     assert(rc);
 
     ct_setStream(pTest, stdout);
