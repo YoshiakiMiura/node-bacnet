@@ -66,6 +66,7 @@ void handler_ucov_notification(
     BACNET_COV_DATA cov_data;
     BACNET_PROPERTY_VALUE property_value[MAX_COV_PROPERTIES];
     BACNET_PROPERTY_VALUE *pProperty_value = NULL;
+    BACNET_APPLICATION_DATA_VALUE app_data;
     int len = 0;
     unsigned index = 0;
 
@@ -78,6 +79,7 @@ void handler_ucov_notification(
         index++;
         if (index < MAX_COV_PROPERTIES) {
             pProperty_value->next = &property_value[index];
+            (&pProperty_value->value)->next = &app_data;
         } else {
             pProperty_value->next = NULL;
         }
