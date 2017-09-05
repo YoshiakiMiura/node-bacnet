@@ -336,7 +336,6 @@ int bacapp_decode_application_data(
             fprintf(stderr, "failed to decode tag");
 #endif
         }
-        value->next = NULL;
     }
 
     return len;

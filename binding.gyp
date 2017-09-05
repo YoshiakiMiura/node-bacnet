@@ -2,7 +2,7 @@
   "targets": [
     {
       "target_name": "binding",
-      "defines": ["PRINT_ENABLED=1"],
+      "defines": ["PRINT_ENABLED=1", "MAX_COV_PROPERTIES=16"],
       "cflags_cc": ["-std=c++11"],
       'xcode_settings': {
         'CLANG_CXX_LANGUAGE_STANDARD': 'c++11',

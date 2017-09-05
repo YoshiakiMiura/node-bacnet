@@ -7,8 +7,8 @@ const tools = require('./tools')
 const iface = tools.getSuitableBroadcastInterface()
 
 describe('Subscribe COV', function () {
-  subscribe('analog-input', 'confirmed')
-  // subscribe('analog-input', 'unconfirmed')
+  //subscribe('analog-input', 'confirmed')
+  subscribe('analog-input', 'unconfirmed')
 
   function subscribe (objType, confirmed) {
     it(`Subscribe COV for ${objType}(${confirmed})`, function (done) {

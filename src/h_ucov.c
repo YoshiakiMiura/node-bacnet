@@ -41,7 +41,7 @@
 #include "handlers.h"
 
 #ifndef MAX_COV_PROPERTIES
-#define MAX_COV_PROPERTIES 4
+#define MAX_COV_PROPERTIES 2
 #endif
 
 /** @file h_ucov.c  Handles Unconfirmed COV Notifications. */
