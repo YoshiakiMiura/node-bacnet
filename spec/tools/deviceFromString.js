@@ -32,6 +32,9 @@ function initializeDevice (config) {
     device.on('reject', function (event) {
       process.send({type: 'reject', event: event})
     })
+    device.on('timesync', function (event) {
+      process.send({type: 'timesync', event: event})
+    })
   } catch (err) {
     return process.send({type: 'init-error', event: err.stack})
   }
